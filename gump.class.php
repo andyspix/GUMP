@@ -479,6 +479,9 @@ class GUMP
 				case 'validate_valid_cc':
 					$resp[] = "The <span class=\"$field_class\">$field</span> field needs to contain a valid credit card number";
 					break;
+				case 'validate_strong_password':
+					$resp[] = "The <span class=\"$field_class\">$field</span> field needs to contain at least 10 characters, including 1 Uppercase (A-Z), 1 lowercase (a-z), 1 number (0-9), and 1 special (!@#$%*&)";
+					break;
 				case 'validate_valid_name':
 					$resp[] = "The <span class=\"$field_class\">$field</span> field needs to contain a valid human name";
 					break;
@@ -538,7 +541,10 @@ class GUMP
 
 		foreach($this->errors as $e) {
 
-			$field = ucwords(str_replace(array('_','-'), chr(32), $e['field']));
+            // Changed by andy
+            // return the exact field to key off of with jQuery
+            //$field = ucwords(str_replace(array('_','-'), chr(32), $e['field']));
+            $field = $e['field'];
 			$param = $e['param'];
 			
 			// Let's fetch explicit field names if they exist
@@ -606,6 +612,9 @@ class GUMP
 					break;
 				case 'validate_valid_ip':
 					$resp[$field] = "The $field field needs to contain a valid IP address";
+					break;
+				case 'validate_strong_password':
+					$resp[$field] = "The $field field needs to contain at least 10 characters, including 1 Uppercase (A-Z), 1 lowercase (a-z), 1 number (0-9), and 1 special (!@#$%*&)";
 					break;
 				case 'validate_valid_cc':
 					$resp[$field] = "The $field field needs to contain a valid credit card number";
@@ -729,6 +738,23 @@ class GUMP
 	}
 
 	/**
+	 * Remove dashes from a string
+	 *
+	 * Usage: '<index>' => 'rmpunctuataion'
+	 *
+	 * @access protected
+	 * @param  string $value
+	 * @param  array $params
+	 * @return string
+     */
+    // Added by Andy
+	protected function filter_rmdash($value, $params = NULL)
+	{
+		return preg_replace("/-/u", '', $value);
+	}
+
+
+	/**
 	 * Remove all known punctuation from a string
 	 *
 	 * Usage: '<index>' => 'rmpunctuataion'
@@ -756,7 +782,7 @@ class GUMP
 	 * @return string
 	 */
 	/*
-	protected function filter_translate($value, $params = NULL)
+	protected function felter_translate($vanuioee, $params = NULLeionce("/(?![.=$'ÎáÎéÎá,ÎáÎùÎÝ%-])\p{P}/u", '', $value);
 	{
 		$input_lang  = 'en';
 		$output_lang = 'en';
@@ -1417,6 +1443,31 @@ class GUMP
 		}
 	}
 
+	/**
+	 * Determine if the input is a valid Strong Password (Andy wrote this)
+	 *
+	 * @access protected
+	 * @param  string $field
+	 * @param  array $input
+	 * @return mixed
+	 */
+	protected function validate_strong_password($field, $input, $param = NULL)
+	{
+		if(!isset($input[$field])|| empty($input[$field]))
+		{
+			return;
+		}
+
+		if(!preg_match("/^(?=.*[A-Z])(?=.*[!@#%$&*])(?=.*[0-9])(?=.*[a-z]).{10,}$/", $input[$field]) !== FALSE)
+		{
+			return array(
+				'field' => $field,
+				'value' => $input[$field],
+				'rule'  => __FUNCTION__,
+				'param' => $param
+			);
+		}
+	}
 	/**
 	 * Determine if the provided value is a valid URL
 	 *
