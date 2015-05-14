@@ -1076,7 +1076,7 @@ class GUMP
 		}
 
 		## Allow handling of comma separated email lists
-		$emails = explode("," $input[$field]);
+		$emails = explode(",", $input[$field]);
 		foreach ($emails as $email) {
 		  $email = trim($email);
 
