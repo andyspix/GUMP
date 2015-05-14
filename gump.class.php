@@ -560,7 +560,7 @@ class GUMP
 					$resp[$field] = "The $field field is required";
 					break;
 				case 'validate_valid_email':
-					$resp[$field] = "The $field field is required to be a valid email address";
+					$resp[$field] = "The $field field is required to contain valid email address(es)";
 					break;
 				case 'validate_max_len':
 					if($param == 1) {
