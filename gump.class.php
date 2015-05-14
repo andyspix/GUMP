@@ -1075,14 +1075,20 @@ class GUMP
 			return;
 		}
 
-		if(!filter_var($input[$field], FILTER_VALIDATE_EMAIL))
-		{
-			return array(
-				'field' => $field,
-				'value' => $input[$field],
-				'rule'  => __FUNCTION__,
-				'param' => $param
-			);
+		## Allow handling of comma separated email lists
+		$emails = explode("," $input[$field]);
+		foreach ($emails as $email) {
+		  $email = trim($email);
+
+		  if(!filter_var($email, FILTER_VALIDATE_EMAIL))
+		  {
+			  return array(
+				  'field' => $field,
+				  'value' => $input[$field],
+				  'rule'  => __FUNCTION__,
+				  'param' => $param
+			  );
+		  }
 		}
 	}
 
